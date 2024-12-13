@@ -1,8 +1,11 @@
 asgiref==3.8.1
+cffi==1.17.1
+cryptography==44.0.0
 dj-database-url==2.3.0
 Django==5.1.4
 django-rest-framework==0.1.0
 djangorestframework==3.15.2
+pycparser==2.22
 PyMySQL==1.1.1
 python-dotenv==1.0.1
 sqlparse==0.5.2

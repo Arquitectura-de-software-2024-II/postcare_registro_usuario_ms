@@ -27,3 +27,5 @@ venv/
 ENV/
 env/
 .venv/
+init.sql
+mysql-conf.d/
