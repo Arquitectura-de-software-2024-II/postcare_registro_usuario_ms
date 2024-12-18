@@ -5,15 +5,11 @@ from django.utils import timezone
 
 # Create your models here.
 class UserAccountManager(BaseUserManager):
-    def create_user(self, email, password=None, **kwargs):
-        if not email:
-            raise ValueError('Users must have an email address')
+    def create_user(self, id_document, password=None, **kwargs):
         
-        email = self.normalize_email(email)
-        email = email.lower()
 
         user = self.model(
-            email=email,
+            id_document=id_document,
             **kwargs
         )
 
@@ -21,8 +17,8 @@ class UserAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **kwargs):
-        user = self.create_user(email, password=password, **kwargs)
+    def create_superuser(self, id_document, password=None, **kwargs):
+        user = self.create_user(id_document=id_document, password=password, **kwargs)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -31,11 +27,11 @@ class UserAccountManager(BaseUserManager):
 
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    id = models.AutoField(primary_key=True, default=1)
-    first_name = models.CharField(max_length=255, default='default_first_name')
-    last_name = models.CharField(max_length=255, default='default_first_name')
-    email = models.EmailField(max_length=255, unique=True)
 
+    nombre = models.CharField(max_length=255, db_column='nombre')
+    apellido = models.CharField(max_length=255, db_column='apellido')
+    id_document = models.CharField(max_length=255, unique=True, db_column='id_document')
+    email = models.EmailField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -44,8 +40,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     objects = UserAccountManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    USERNAME_FIELD = 'id_document'
+    REQUIRED_FIELDS = ['nombre', 'apellido']
 
     class Meta:
         db_table = 'Usuario'

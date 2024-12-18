@@ -106,3 +106,10 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
 
         return response
+
+
+class UpdateInfoView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+   
+    def get_object(self):
+        return self.request.user
