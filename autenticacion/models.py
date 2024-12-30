@@ -5,11 +5,11 @@ from django.utils import timezone
 
 # Create your models here.
 class UserAccountManager(BaseUserManager):
-    def create_user(self, id_document, password=None, **kwargs):
+    def create_user(self, id_documento, password=None, **kwargs):
         
 
         user = self.model(
-            id_document=id_document,
+            id_documento=id_documento,
             **kwargs
         )
 
@@ -17,8 +17,8 @@ class UserAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, id_document, password=None, **kwargs):
-        user = self.create_user(id_document=id_document, password=password, **kwargs)
+    def create_superuser(self, id_documento, password=None, **kwargs):
+        user = self.create_user(id_documento=id_documento, password=password, **kwargs)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -28,10 +28,11 @@ class UserAccountManager(BaseUserManager):
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
 
-    nombre = models.CharField(max_length=255, db_column='nombre')
-    apellido = models.CharField(max_length=255, db_column='apellido')
-    id_document = models.CharField(max_length=255, unique=True, db_column='id_document')
-    email = models.EmailField(max_length=255)
+    nombres = models.CharField(max_length=255, db_column='nombre')
+    apellidos = models.CharField(max_length=255, db_column='apellido')
+    id_documento = models.CharField(max_length=255, unique=True, db_column='id_documento')
+    tipo_documento = models.CharField(max_length=50, db_column='tipo_documento')
+    email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -40,8 +41,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     objects = UserAccountManager()
 
-    USERNAME_FIELD = 'id_document'
-    REQUIRED_FIELDS = ['nombre', 'apellido']
+    USERNAME_FIELD = 'id_documento'
+    REQUIRED_FIELDS = ['nombres', 'apellidos' ,'email','tipo_documento']
 
     class Meta:
         db_table = 'Usuario'
@@ -77,7 +78,6 @@ class UsuarioContacto(models.Model):
 
 class UsuarioInformacionPersonal(models.Model):
     id_documento = models.ForeignKey(Usuario, models.CASCADE, db_column='id_documento')
-    tipo_documento = models.CharField(max_length=50, db_column='tipo_documento')
     fecha_nacimiento = models.DateTimeField(blank=True, null=True, db_column='fecha_nacimiento')
     estado_civil = models.CharField(max_length=50, blank=True, null=True, db_column='estado_civil')
     genero = models.CharField(max_length=50, blank=True, null=True, db_column='genero')
