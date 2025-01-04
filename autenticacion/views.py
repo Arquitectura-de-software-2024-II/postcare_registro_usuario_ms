@@ -12,6 +12,9 @@ from rest_framework_simplejwt.views import(
     TokenRefreshView,
     TokenVerifyView
 )
+from .serializers import UsuarioSerializer,UsuarioInformacionPersonalSerializer, UsuarioContactoSerializer, UsuarioInformacionMeSerializer
+from .models import UsuarioInformacionPersonal, UsuarioContacto
+from djoser.views import UserViewSet
 
 class CustomProviderAuthView(ProviderAuthView):
     def post(self, request, *args, **kwargs):
@@ -106,10 +109,80 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
 
         return response
+    
+class CustomUserViewSet(UserViewSet):
+    def me(self, request, *args, **kwargs):
+        user = request.user
+        serializer = UsuarioInformacionMeSerializer(user)
+        return Response(serializer.data)
 
 
-class UpdateInfoView(generics.UpdateAPIView):
+class UserFormInfoView(APIView):
     permission_classes = [IsAuthenticated]
-   
-    def get_object(self):
-        return self.request.user
+
+    def post(self, request):
+        user = request.user
+        personal_info_data = request.data.get('informacion_personal')
+        contacto_data = request.data.get('contacto')
+
+        personal_info_data['usuario'] = user.id
+        contacto_data['usuario'] = user.id
+
+        personal_info_instance, _ = UsuarioInformacionPersonal.objects.get_or_create(usuario=user)
+        contacto_instance, _ = UsuarioContacto.objects.get_or_create(usuario=user)
+
+        personal_info_serializer = UsuarioInformacionPersonalSerializer(personal_info_instance, data=personal_info_data)
+        contacto_serializer = UsuarioContactoSerializer(contacto_instance, data=contacto_data)
+
+        if personal_info_serializer.is_valid() and contacto_serializer.is_valid():
+            personal_info_serializer.save()
+            contacto_serializer.save()
+            return Response({
+                'informacion_personal': personal_info_serializer.data,
+                'contacto': contacto_serializer.data
+            }, status=status.HTTP_200_OK)
+        return Response({
+            'informacion_personal': personal_info_serializer.errors,
+            'contacto': contacto_serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class UpdateUserInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        user_data = request.data.get('usuario', {})
+        personal_info_data = request.data.get('informacion_personal', {})
+        contacto_data = request.data.get('contacto', {})
+
+        if personal_info_data:
+            personal_info_data['id_documento'] = user.id
+        if contacto_data:
+            contacto_data['id_usuario'] = user.id
+
+        user_serializer = UsuarioSerializer(user, data=user_data, partial=True)
+        personal_info_instance, _ = UsuarioInformacionPersonal.objects.get_or_create(usuario=user)
+        contacto_instance, _ = UsuarioContacto.objects.get_or_create(usuario=user)
+
+        personal_info_serializer = UsuarioInformacionPersonalSerializer(personal_info_instance, data=personal_info_data, partial=True)
+        contacto_serializer = UsuarioContactoSerializer(contacto_instance, data=contacto_data, partial=True)
+
+        if user_serializer.is_valid() and personal_info_serializer.is_valid() and contacto_serializer.is_valid():
+            user_serializer.save()
+            personal_info_serializer.save()
+            contacto_serializer.save()
+            return Response({
+                'usuario': user_serializer.data,
+                'informacion_personal': personal_info_serializer.data,
+                'contacto': contacto_serializer.data
+            }, status=status.HTTP_200_OK)
+        
+        errors = {}
+        if not user_serializer.is_valid():
+            errors['usuario'] = user_serializer.errors
+        if not personal_info_serializer.is_valid():
+            errors['informacion_personal'] = personal_info_serializer.errors
+        if not contacto_serializer.is_valid():
+            errors['contacto'] = contacto_serializer.errors
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)

@@ -64,6 +64,8 @@ CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False') == 'True'
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:8000').split(',')
 
+CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'False') == 'True'
+
 ROOT_URLCONF = 'users.urls'
 
 TEMPLATES = [
@@ -159,6 +161,9 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None,
+    'SERIALIZERS': {
+        'current_user': 'autenticacion.serializers.UsuarioInformacionMeSerializer',
+    },
 }
 
 AUTH_COOKIE = 'access'
