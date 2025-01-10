@@ -13,6 +13,7 @@ import os
 import pymysql
 import dj_database_url
 from dotenv import load_dotenv
+from datetime import timedelta
 
 
 from pathlib import Path
@@ -176,3 +177,12 @@ AUTH_COOKIE_SAMESITE = 'None'
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:8000').split(',')
 
 AUTH_USER_MODEL = 'autenticacion.Usuario'
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=24),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    # Puedes agregar más configuraciones según tus necesidades
+}
