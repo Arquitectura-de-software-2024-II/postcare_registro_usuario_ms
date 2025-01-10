@@ -1,12 +1,13 @@
 from django.urls import path
 
 from .views import(
-    CustomProviderAuthView,
     CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
     LogoutView,
-    UpdateInfoView
+    UpdateUserInfoView,
+    UserFormInfoView,
+    CustomUserViewSet
 )
 
 urlpatterns = [
@@ -14,5 +15,7 @@ urlpatterns = [
     path('jwt/refresh/', CustomTokenRefreshView.as_view()),
     path('jwt/verify/', CustomTokenVerifyView.as_view()),
     path('jwt/logout/', LogoutView.as_view()),
-    path('update-info/', UpdateInfoView.as_view()),
+    path('form-info/', UserFormInfoView.as_view()),
+    path('update-info/', UpdateUserInfoView.as_view()),
+    path('users/me/', CustomUserViewSet.as_view({'get': 'list'}))
 ]
