@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'djoser',
     'autenticacion',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
