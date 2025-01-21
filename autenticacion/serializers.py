@@ -9,7 +9,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class UsuarioInformacionPersonalSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsuarioInformacionPersonal
-        fields = ['fecha_nacimiento', 'estado_civil', 'genero', 'ocupacion', 'tipo_sangre']
+        fields = ['fecha_nacimiento', 'estado_civil', 'genero', 'ocupacion', 'tipo_sangre','triage']
 
 class UsuarioContactoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -97,6 +97,7 @@ class UsuarioInformacionPersonal(models.Model):
     genero = models.CharField(max_length=50, blank=True, null=True, db_column='genero')
     ocupacion = models.CharField(max_length=100, blank=True, null=True, db_column='ocupacion')
     tipo_sangre = models.CharField(max_length=10, blank=True, null=True, db_column='tipo_sangre')
+    triage = models.CharField(max_length=50, blank=True, null=True, db_column='triage')
 
     class Meta:
         managed = True
