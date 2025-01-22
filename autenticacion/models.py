@@ -97,11 +97,17 @@ class UsuarioInformacionPersonal(models.Model):
     genero = models.CharField(max_length=50, blank=True, null=True, db_column='genero')
     ocupacion = models.CharField(max_length=100, blank=True, null=True, db_column='ocupacion')
     tipo_sangre = models.CharField(max_length=10, blank=True, null=True, db_column='tipo_sangre')
-    triage = models.CharField(max_length=50, blank=True, null=True, db_column='triage')
+    triage = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        db_column='triage',
+        default='NA'
+    )
 
     class Meta:
         managed = True
         db_table = 'Usuario_informacion_personal'
 
     def __str__(self):
-        return f"Información Personal de {self.id_documento}"
+        return f"Información Personal de {self.usuario.email}"

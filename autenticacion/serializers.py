@@ -30,3 +30,10 @@ class UsuarioInformacionMeSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = ['id', 'nombres', 'apellidos', 'email', 'tipo_documento','user_rol', 'informacion_personal', 'contacto']
 
+
+class PacienteSerializer(serializers.ModelSerializer):
+    triage = serializers.CharField(source='usuarioinformacionpersonal.triage')
+
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nombres', 'apellidos', 'email', 'triage']

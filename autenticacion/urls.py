@@ -7,7 +7,8 @@ from .views import(
     LogoutView,
     UpdateUserInfoView,
     UserFormInfoView,
-    CustomUserViewSet
+    CustomUserViewSet,
+    ListaPacientesView
 )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
     path('jwt/logout/', LogoutView.as_view()),
     path('form-info/', UserFormInfoView.as_view()),
     path('update-info/', UpdateUserInfoView.as_view()),
-    path('users/me/', CustomUserViewSet.as_view({'get': 'list'}))
+    path('users/me/', CustomUserViewSet.as_view({'get': 'list'})),
+    path('pacientes/', ListaPacientesView.as_view())
 ]

@@ -12,9 +12,16 @@ from rest_framework_simplejwt.views import(
     TokenRefreshView,
     TokenVerifyView
 )
-from .serializers import UsuarioSerializer,UsuarioInformacionPersonalSerializer, UsuarioContactoSerializer, UsuarioInformacionMeSerializer
-from .models import UsuarioInformacionPersonal, UsuarioContacto
+from .serializers import(
+    UsuarioSerializer,
+    UsuarioInformacionPersonalSerializer,
+    UsuarioContactoSerializer,
+    UsuarioInformacionMeSerializer,
+    PacienteSerializer
+)
+from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario
 from djoser.views import UserViewSet
+from .permissions import IsAdministrador
 
 class CustomProviderAuthView(ProviderAuthView):
     def post(self, request, *args, **kwargs):
@@ -186,3 +193,14 @@ class UpdateUserInfoView(APIView):
         if not contacto_serializer.is_valid():
             errors['contacto'] = contacto_serializer.errors
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ListaPacientesView(generics.ListAPIView):
+    serializer_class = PacienteSerializer
+    permission_classes = [IsAdministrador]
+
+    def get_queryset(self):
+        queryset = Usuario.objects.filter(rol__nombre='paciente')
+        prioridad = self.request.query_params.get('prioridad', None)
+        if prioridad:
+            queryset = queryset.filter(usuarioinformacionpersonal__triage=prioridad)
+        return queryset
