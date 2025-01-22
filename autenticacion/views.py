@@ -17,7 +17,8 @@ from .serializers import(
     UsuarioInformacionPersonalSerializer,
     UsuarioContactoSerializer,
     UsuarioInformacionMeSerializer,
-    PacienteSerializer
+    PacienteSerializer,
+    UsuarioDetalleSerializer
 )
 from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario
 from djoser.views import UserViewSet
@@ -204,3 +205,15 @@ class ListaPacientesView(generics.ListAPIView):
         if prioridad:
             queryset = queryset.filter(usuarioinformacionpersonal__triage=prioridad)
         return queryset
+    
+class DetalleUsuarioView(generics.RetrieveAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioDetalleSerializer
+    permission_classes = [IsAdministrador]
+    lookup_field = 'id'  # Puedes cambiar a otro campo si lo prefieres
+
+class DetalleUsuarioDocumentoView(generics.RetrieveAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioDetalleSerializer
+    permission_classes = [IsAdministrador]
+    lookup_field = 'id_documento'  # Puedes cambiar a otro campo si lo prefieres

@@ -28,7 +28,7 @@ class UsuarioInformacionMeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuario
-        fields = ['id', 'nombres', 'apellidos', 'email', 'tipo_documento','user_rol', 'informacion_personal', 'contacto']
+        fields = ['id', 'id_documento','nombres', 'apellidos', 'email', 'tipo_documento','user_rol', 'informacion_personal', 'contacto']
 
 
 class PacienteSerializer(serializers.ModelSerializer):
@@ -36,4 +36,13 @@ class PacienteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuario
-        fields = ['id', 'nombres', 'apellidos', 'email', 'triage']
+        fields = ['id', 'id_documento', 'nombres', 'apellidos', 'email', 'triage']
+
+class UsuarioDetalleSerializer(serializers.ModelSerializer):
+    informacion_personal = UsuarioInformacionPersonalSerializer(source='usuarioinformacionpersonal', read_only=True)
+    contacto = UsuarioContactoSerializer(source='usuariocontacto', read_only=True)
+    user_rol = UsuarioRolSerializer(source='rol', read_only=True)
+
+    class Meta:
+        model = Usuario
+        fields = ['id','id_documento', 'nombres', 'apellidos', 'email', 'tipo_documento', 'user_rol', 'informacion_personal', 'contacto']

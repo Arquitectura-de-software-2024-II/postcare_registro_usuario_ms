@@ -8,7 +8,9 @@ from .views import(
     UpdateUserInfoView,
     UserFormInfoView,
     CustomUserViewSet,
-    ListaPacientesView
+    ListaPacientesView,
+    DetalleUsuarioView,
+    DetalleUsuarioDocumentoView
 )
 
 urlpatterns = [
@@ -19,5 +21,7 @@ urlpatterns = [
     path('form-info/', UserFormInfoView.as_view()),
     path('update-info/', UpdateUserInfoView.as_view()),
     path('users/me/', CustomUserViewSet.as_view({'get': 'list'})),
-    path('pacientes/', ListaPacientesView.as_view())
+    path('pacientes/', ListaPacientesView.as_view()),
+    path('pacientes/<int:id>/', DetalleUsuarioView.as_view()),
+    path('pacientes/documento/<str:id_documento>/', DetalleUsuarioDocumentoView.as_view())
 ]
