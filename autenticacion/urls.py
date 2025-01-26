@@ -11,7 +11,8 @@ from .views import(
     ListaPacientesView,
     DetalleUsuarioView,
     DetalleUsuarioDocumentoView,
-    ChangeUserRoleView
+    ChangeUserRoleView,
+    ChangeUserTriageView,
 )
 
 urlpatterns = [
@@ -25,6 +26,6 @@ urlpatterns = [
     path('pacientes/', ListaPacientesView.as_view()),
     path('pacientes/<int:id>/', DetalleUsuarioView.as_view()),
     path('pacientes/documento/<str:id_documento>/', DetalleUsuarioDocumentoView.as_view()),
-   path('change-role/<int:id_usuario>/', ChangeUserRoleView.as_view(), name='change-user-role'),
- #   path('users/triage')
+    path('change-role/<int:id_usuario>/', ChangeUserRoleView.as_view(), name='change-user-role'),
+    path('users/triage/<int:id_usuario>/', ChangeUserTriageView.as_view(), name='change-user-triage'),
 ]

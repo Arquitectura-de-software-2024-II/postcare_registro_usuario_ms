@@ -64,3 +64,11 @@ class ChangeUserRoleSerializer(serializers.Serializer):
             raise serializers.ValidationError({"password": "Contraseña incorrecta."})
 
         return attrs
+    
+class ChangeUserTriageSerializer(serializers.Serializer):
+    triage = serializers.CharField(max_length=50)
+
+    def validate_id_usuario(self, value):
+        if not UsuarioInformacionPersonal.objects.filter(usuario__id=value).exists():
+            raise serializers.ValidationError("Usuario no encontrado.")
+        return value

@@ -19,7 +19,8 @@ from .serializers import(
     UsuarioInformacionMeSerializer,
     PacienteSerializer,
     UsuarioDetalleSerializer,
-    ChangeUserRoleSerializer
+    ChangeUserRoleSerializer,
+    ChangeUserTriageSerializer
 )
 from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario, Rol
 from djoser.views import UserViewSet
@@ -235,5 +236,24 @@ class ChangeUserRoleView(APIView):
             usuario.rol = rol
             usuario.save()
             return Response({'mensaje': 'Rol actualizado exitosamente.'}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangeUserTriageView(APIView):
+    permission_classes = [IsAuthenticated, IsAdministrador]
+
+    def post(self, request, id_usuario):
+        serializer = ChangeUserTriageSerializer(data=request.data)
+        if serializer.is_valid():
+            triage = serializer.validated_data['triage']
+            
+            try:
+                usuario = Usuario.objects.get(id=id_usuario)
+                personal_info, created = UsuarioInformacionPersonal.objects.get_or_create(usuario=usuario)
+                personal_info.triage = triage
+                personal_info.save()
+                return Response({'mensaje': 'Triage actualizado exitosamente.'}, status=status.HTTP_200_OK)
+            except Usuario.DoesNotExist:
+                return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
