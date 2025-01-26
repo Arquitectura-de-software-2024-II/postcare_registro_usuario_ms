@@ -18,9 +18,10 @@ from .serializers import(
     UsuarioContactoSerializer,
     UsuarioInformacionMeSerializer,
     PacienteSerializer,
-    UsuarioDetalleSerializer
+    UsuarioDetalleSerializer,
+    ChangeUserRoleSerializer
 )
-from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario
+from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario, Rol
 from djoser.views import UserViewSet
 from .permissions import IsAdministrador
 
@@ -217,3 +218,22 @@ class DetalleUsuarioDocumentoView(generics.RetrieveAPIView):
     serializer_class = UsuarioDetalleSerializer
     permission_classes = [IsAdministrador]
     lookup_field = 'id_documento'  # Puedes cambiar a otro campo si lo prefieres
+
+class ChangeUserRoleView(APIView):
+    permission_classes = [IsAuthenticated, IsAdministrador]
+
+    def patch(self, request, id_usuario):
+        try:
+            usuario = Usuario.objects.get(id=id_usuario)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ChangeUserRoleSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            rol_nombre = serializer.validated_data.get('rol')
+            rol, _ = Rol.objects.get_or_create(nombre=rol_nombre)
+            usuario.rol = rol
+            usuario.save()
+            return Response({'mensaje': 'Rol actualizado exitosamente.'}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

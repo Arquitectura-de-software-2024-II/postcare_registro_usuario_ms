@@ -46,3 +46,21 @@ class UsuarioDetalleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['id','id_documento', 'nombres', 'apellidos', 'email', 'tipo_documento', 'user_rol', 'informacion_personal', 'contacto']
+
+class ChangeUserRoleSerializer(serializers.Serializer):
+    rol = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate_rol(self, value):
+        if value not in ['administrador', 'paciente']:
+            raise serializers.ValidationError("Rol inválido.")
+        return value
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        password = attrs.get('password')
+
+        if not user.check_password(password):
+            raise serializers.ValidationError({"password": "Contraseña incorrecta."})
+
+        return attrs

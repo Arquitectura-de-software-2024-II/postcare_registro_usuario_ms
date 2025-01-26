@@ -10,7 +10,8 @@ from .views import(
     CustomUserViewSet,
     ListaPacientesView,
     DetalleUsuarioView,
-    DetalleUsuarioDocumentoView
+    DetalleUsuarioDocumentoView,
+    ChangeUserRoleView
 )
 
 urlpatterns = [
@@ -23,5 +24,7 @@ urlpatterns = [
     path('users/me/', CustomUserViewSet.as_view({'get': 'list'})),
     path('pacientes/', ListaPacientesView.as_view()),
     path('pacientes/<int:id>/', DetalleUsuarioView.as_view()),
-    path('pacientes/documento/<str:id_documento>/', DetalleUsuarioDocumentoView.as_view())
+    path('pacientes/documento/<str:id_documento>/', DetalleUsuarioDocumentoView.as_view()),
+   path('change-role/<int:id_usuario>/', ChangeUserRoleView.as_view(), name='change-user-role'),
+ #   path('users/triage')
 ]
