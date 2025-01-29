@@ -240,7 +240,7 @@ class ChangeUserRoleView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ChangeUserTriageView(APIView):
-    permission_classes = [IsAuthenticated, IsAdministrador]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, id_usuario):
         serializer = ChangeUserTriageSerializer(data=request.data)
