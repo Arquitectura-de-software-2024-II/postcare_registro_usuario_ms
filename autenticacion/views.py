@@ -12,9 +12,19 @@ from rest_framework_simplejwt.views import(
     TokenRefreshView,
     TokenVerifyView
 )
-from .serializers import UsuarioSerializer,UsuarioInformacionPersonalSerializer, UsuarioContactoSerializer, UsuarioInformacionMeSerializer
-from .models import UsuarioInformacionPersonal, UsuarioContacto
+from .serializers import(
+    UsuarioSerializer,
+    UsuarioInformacionPersonalSerializer,
+    UsuarioContactoSerializer,
+    UsuarioInformacionMeSerializer,
+    PacienteSerializer,
+    UsuarioDetalleSerializer,
+    ChangeUserRoleSerializer,
+    ChangeUserTriageSerializer
+)
+from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario, Rol
 from djoser.views import UserViewSet
+from .permissions import IsAdministrador
 
 class CustomProviderAuthView(ProviderAuthView):
     def post(self, request, *args, **kwargs):
@@ -186,3 +196,64 @@ class UpdateUserInfoView(APIView):
         if not contacto_serializer.is_valid():
             errors['contacto'] = contacto_serializer.errors
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ListaPacientesView(generics.ListAPIView):
+    serializer_class = PacienteSerializer
+    permission_classes = [IsAdministrador]
+
+    def get_queryset(self):
+        queryset = Usuario.objects.filter(rol__nombre='paciente')
+        prioridad = self.request.query_params.get('prioridad', None)
+        if prioridad:
+            queryset = queryset.filter(usuarioinformacionpersonal__triage=prioridad)
+        return queryset
+    
+class DetalleUsuarioView(generics.RetrieveAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioDetalleSerializer
+    permission_classes = [IsAdministrador]
+    lookup_field = 'id'  # Puedes cambiar a otro campo si lo prefieres
+
+class DetalleUsuarioDocumentoView(generics.RetrieveAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioDetalleSerializer
+    permission_classes = [IsAdministrador]
+    lookup_field = 'id_documento'  # Puedes cambiar a otro campo si lo prefieres
+
+class ChangeUserRoleView(APIView):
+    permission_classes = [IsAuthenticated, IsAdministrador]
+
+    def patch(self, request, id_usuario):
+        try:
+            usuario = Usuario.objects.get(id=id_usuario)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ChangeUserRoleSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            rol_nombre = serializer.validated_data.get('rol')
+            rol, _ = Rol.objects.get_or_create(nombre=rol_nombre)
+            usuario.rol = rol
+            usuario.save()
+            return Response({'mensaje': 'Rol actualizado exitosamente.'}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangeUserTriageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id_usuario):
+        serializer = ChangeUserTriageSerializer(data=request.data)
+        if serializer.is_valid():
+            triage = serializer.validated_data['triage']
+            
+            try:
+                usuario = Usuario.objects.get(id=id_usuario)
+                personal_info, created = UsuarioInformacionPersonal.objects.get_or_create(usuario=usuario)
+                personal_info.triage = triage
+                personal_info.save()
+                return Response({'mensaje': 'Triage actualizado exitosamente.'}, status=status.HTTP_200_OK)
+            except Usuario.DoesNotExist:
+                return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

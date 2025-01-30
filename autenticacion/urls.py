@@ -7,7 +7,12 @@ from .views import(
     LogoutView,
     UpdateUserInfoView,
     UserFormInfoView,
-    CustomUserViewSet
+    CustomUserViewSet,
+    ListaPacientesView,
+    DetalleUsuarioView,
+    DetalleUsuarioDocumentoView,
+    ChangeUserRoleView,
+    ChangeUserTriageView,
 )
 
 urlpatterns = [
@@ -17,5 +22,10 @@ urlpatterns = [
     path('jwt/logout/', LogoutView.as_view()),
     path('form-info/', UserFormInfoView.as_view()),
     path('update-info/', UpdateUserInfoView.as_view()),
-    path('users/me/', CustomUserViewSet.as_view({'get': 'list'}))
+    path('users/me/', CustomUserViewSet.as_view({'get': 'list'})),
+    path('pacientes/', ListaPacientesView.as_view()),
+    path('pacientes/<int:id>/', DetalleUsuarioView.as_view()),
+    path('pacientes/documento/<str:id_documento>/', DetalleUsuarioDocumentoView.as_view()),
+    path('change-role/<int:id_usuario>/', ChangeUserRoleView.as_view(), name='change-user-role'),
+    path('users/triage/<int:id_usuario>/', ChangeUserTriageView.as_view(), name='change-user-triage'),
 ]
