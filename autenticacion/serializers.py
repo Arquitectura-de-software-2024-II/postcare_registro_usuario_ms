@@ -72,3 +72,9 @@ class ChangeUserTriageSerializer(serializers.Serializer):
         if not UsuarioInformacionPersonal.objects.filter(usuario__id=value).exists():
             raise serializers.ValidationError("Usuario no encontrado.")
         return value
+    
+
+class EmergencyContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsuarioContacto
+        fields = ['telefono', 'direccion', 'ciudad']
