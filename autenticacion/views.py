@@ -257,3 +257,21 @@ class ChangeUserTriageView(APIView):
                 return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class EmergencyContactView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, id_usuario):
+        try:
+            usuario = Usuario.objects.get(id=id_usuario)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            contacto = usuario.usuariocontacto
+        except UsuarioContacto.DoesNotExist:
+            return Response({'error': 'Contacto de emergencia no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = UsuarioContactoSerializer(contacto, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

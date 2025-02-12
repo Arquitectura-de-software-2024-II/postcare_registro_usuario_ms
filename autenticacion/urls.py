@@ -13,6 +13,7 @@ from .views import(
     DetalleUsuarioDocumentoView,
     ChangeUserRoleView,
     ChangeUserTriageView,
+    EmergencyContactView,
 )
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path('pacientes/documento/<str:id_documento>/', DetalleUsuarioDocumentoView.as_view()),
     path('change-role/<int:id_usuario>/', ChangeUserRoleView.as_view(), name='change-user-role'),
     path('users/triage/<int:id_usuario>/', ChangeUserTriageView.as_view(), name='change-user-triage'),
+    path('emergency-contact/<int:id_usuario>/', EmergencyContactView.as_view(), name='emergency-contact'),
 ]
