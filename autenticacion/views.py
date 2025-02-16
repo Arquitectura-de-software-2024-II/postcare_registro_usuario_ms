@@ -20,7 +20,8 @@ from .serializers import(
     PacienteSerializer,
     UsuarioDetalleSerializer,
     ChangeUserRoleSerializer,
-    ChangeUserTriageSerializer
+    ChangeUserTriageSerializer,
+    EmergencyContactSerializer,
 )
 from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario, Rol
 from djoser.views import UserViewSet
@@ -273,5 +274,5 @@ class EmergencyContactView(APIView):
         except UsuarioContacto.DoesNotExist:
             return Response({'error': 'Contacto de emergencia no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = UsuarioContactoSerializer(contacto, context={'request': request})
+        serializer = EmergencyContactSerializer(contacto, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)

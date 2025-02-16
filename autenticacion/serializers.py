@@ -77,4 +77,4 @@ class ChangeUserTriageSerializer(serializers.Serializer):
 class EmergencyContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsuarioContacto
-        fields = ['telefono', 'direccion', 'ciudad']
+        fields = ['telefono']
