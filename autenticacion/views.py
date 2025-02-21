@@ -70,6 +70,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 'access', 
                 access_token, 
+                domain=settings.AUTH_COOKIE_DOMAIN,
                 max_age=settings.AUTH_COOKIE_ACCESS_MAX_AGE, 
                 path=settings.AUTH_COOKIE_PATH, 
                 secure=settings.AUTH_COOKIE_SECURE, 
@@ -78,7 +79,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             )
             response.set_cookie(
                 'refresh', 
-                refresh_token, 
+                refresh_token,
+                domain=settings.AUTH_COOKIE_DOMAIN,
                 max_age=settings.AUTH_COOKIE_REFRESH_MAX_AGE, 
                 path=settings.AUTH_COOKIE_PATH, 
                 secure=settings.AUTH_COOKIE_SECURE, 
@@ -97,7 +99,8 @@ class CustomTokenRefreshView(TokenRefreshView):
             access_token = response.data.get('access')
             response.set_cookie(
                 'access', 
-                access_token, 
+                access_token,
+                domain=settings.AUTH_COOKIE_DOMAIN,
                 max_age=settings.AUTH_COOKIE_ACCESS_MAX_AGE, 
                 path=settings.AUTH_COOKIE_PATH, 
                 secure=settings.AUTH_COOKIE_SECURE, 
