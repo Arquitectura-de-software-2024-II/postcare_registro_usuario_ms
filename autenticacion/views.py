@@ -20,7 +20,8 @@ from .serializers import(
     PacienteSerializer,
     UsuarioDetalleSerializer,
     ChangeUserRoleSerializer,
-    ChangeUserTriageSerializer
+    ChangeUserTriageSerializer,
+    EmergencyContactSerializer,
 )
 from .models import UsuarioInformacionPersonal, UsuarioContacto, Usuario, Rol
 from djoser.views import UserViewSet
@@ -69,6 +70,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 'access', 
                 access_token, 
+                domain=settings.AUTH_COOKIE_DOMAIN,
                 max_age=settings.AUTH_COOKIE_ACCESS_MAX_AGE, 
                 path=settings.AUTH_COOKIE_PATH, 
                 secure=settings.AUTH_COOKIE_SECURE, 
@@ -77,7 +79,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             )
             response.set_cookie(
                 'refresh', 
-                refresh_token, 
+                refresh_token,
+                domain=settings.AUTH_COOKIE_DOMAIN,
                 max_age=settings.AUTH_COOKIE_REFRESH_MAX_AGE, 
                 path=settings.AUTH_COOKIE_PATH, 
                 secure=settings.AUTH_COOKIE_SECURE, 
@@ -96,7 +99,8 @@ class CustomTokenRefreshView(TokenRefreshView):
             access_token = response.data.get('access')
             response.set_cookie(
                 'access', 
-                access_token, 
+                access_token,
+                domain=settings.AUTH_COOKIE_DOMAIN,
                 max_age=settings.AUTH_COOKIE_ACCESS_MAX_AGE, 
                 path=settings.AUTH_COOKIE_PATH, 
                 secure=settings.AUTH_COOKIE_SECURE, 
@@ -273,5 +277,5 @@ class EmergencyContactView(APIView):
         except UsuarioContacto.DoesNotExist:
             return Response({'error': 'Contacto de emergencia no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = UsuarioContactoSerializer(contacto, context={'request': request})
+        serializer = EmergencyContactSerializer(contacto, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
